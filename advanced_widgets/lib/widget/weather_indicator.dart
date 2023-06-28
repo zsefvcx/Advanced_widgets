@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:advanced_widgets/core/cloud.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //Использовать CustomPaint
 
@@ -17,8 +19,11 @@ class WeatherIndicator extends StatefulWidget {
 }
 
 class _WeatherIndicatorState extends State<WeatherIndicator> {
-  List<Offset> cloud = [];
+  List<Offset> cloud = myCloud;
   Offset position = const Offset(0, 0);
+  Offset prevPosition = const Offset(0, 0);
+
+  bool enablePaint = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,56 +35,87 @@ class _WeatherIndicatorState extends State<WeatherIndicator> {
       ),
       width: 300,
       height: 450,
-      child: Center(child: Column(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           MouseRegion(
-            onHover: (event) => position = event.localPosition,
+            onHover: (event) {
+              position = event.localPosition;
+              if (enablePaint && (abs(prevPosition.dx-position.dx)>1 || abs(prevPosition.dy-position.dy)>1)){
+                cloud.add(position);
+                print(cloud);
+                setState(() {
+                });
+                prevPosition = position;
+              }
+            },
             child: GestureDetector(
               onTap: () {
+                cloud.add(position);
+                print(cloud);
                 setState(() {
-                  cloud.add(position);
-                  print(cloud);
                 });
               },
               onLongPress: () {
+                cloud.clear();
+                print(cloud);
                 setState(() {
-                  cloud.clear();
-                  print(cloud);
                 });
               },
+              onSecondaryTap: () => enablePaint = !enablePaint,
               child: SizedBox(
                 width: 300,
                 height: 400,
                 child: CustomPaint(
                   painter: CustomWeatherIndicator(pressure: widget._pressure, cloud: cloud),
+                  willChange: true,
                 ),
               ),
             ),
           ),
-          Text('${widget._pressure}'),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('${widget._pressure} ${cloud.length}'),
+              TextButton(onPressed: () async {
+                cloud.clear();
+                print(cloud);
+                setState(() {
+                });
+              }, child: const Text('X')),
+              TextButton(onPressed: () async {
+                final SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString('action', cloud.toString());
+              }, child: const Text('Сохранить')),
+            ],
+          ),
         ],
-      )),
+      ),
     );
   }
 }
 
+double abs(double d) => d<0?-d:d;
+
 class CustomWeatherIndicator extends CustomPainter{
-  final double _pressure;
+  final double _opacity;
   final List<Offset> _cloud;
 
   int get cloudLength => _cloud.length;
 
-  double get pressure => _pressure;
+  double get pressure => _opacity;
 
   CustomWeatherIndicator({
     required double pressure,
     required List<Offset> cloud,
-  }) : _pressure = pressure, _cloud = cloud;
+  }) : _opacity = pressure, _cloud = cloud;
 
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint()
-        ..color = Colors.deepOrange
+        ..color = Colors.deepOrange.withOpacity(_opacity>0.7?0:((10/3)*_opacity-7/3))
         ..strokeWidth = 5
         ..style = PaintingStyle.fill;
     var path = Path()
@@ -87,7 +123,8 @@ class CustomWeatherIndicator extends CustomPainter{
         ..close();
     canvas.drawPath(path, paint);
     var paint2 = Paint()
-      ..color = Colors.black
+      //..color = Colors.black.withOpacity(_opacity<0.7?0:((10/3)*_opacity-7/3))
+      ..color = Colors.black.withOpacity(_opacity<0.4?0:((10/3)*_opacity-7/3))
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill;
@@ -104,6 +141,6 @@ class CustomWeatherIndicator extends CustomPainter{
 
   @override
   bool shouldRepaint(CustomWeatherIndicator oldDelegate) =>
-      _pressure != oldDelegate.pressure ||
+      _opacity != oldDelegate.pressure ||
   _cloud.length != oldDelegate.cloudLength;
 }
