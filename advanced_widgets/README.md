@@ -4,13 +4,6 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Главный цвет приложения должен зависеть от текущего профиля (Цвет header, кнопок, заголовков и 
+так далее). Реализовать эту возможность нужно с помощью Inherited Widget. Реализуйте возможность 
+смены профиля с мгновенной сменой основного цвета приложения. Количество цветов — на ваш выбор.
