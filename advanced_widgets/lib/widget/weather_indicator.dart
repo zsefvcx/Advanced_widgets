@@ -3,10 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 //Использовать CustomPaint
-List<Offset> cloud = [];
-Offset position = const Offset(0, 0);
 
-class WeatherIndicator extends StatelessWidget {
+class WeatherIndicator extends StatefulWidget {
   const WeatherIndicator({
     super.key,
     required double pressure,
@@ -15,8 +13,16 @@ class WeatherIndicator extends StatelessWidget {
   final double _pressure;
 
   @override
+  State<WeatherIndicator> createState() => _WeatherIndicatorState();
+}
+
+class _WeatherIndicatorState extends State<WeatherIndicator> {
+  List<Offset> cloud = [];
+  Offset position = const Offset(0, 0);
+
+  @override
   Widget build(BuildContext context) {
-    cloud.clear();
+    debugPrint('build WeatherIndicator');
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -27,22 +33,30 @@ class WeatherIndicator extends StatelessWidget {
       child: Center(child: Column(
         children: [
           MouseRegion(
-            onHover: (event) => position = event.position,
+            onHover: (event) => position = event.localPosition,
             child: GestureDetector(
               onTap: () {
-                cloud.add(position);
-                print(cloud);
+                setState(() {
+                  cloud.add(position);
+                  print(cloud);
+                });
+              },
+              onLongPress: () {
+                setState(() {
+                  cloud.clear();
+                  print(cloud);
+                });
               },
               child: SizedBox(
                 width: 300,
                 height: 400,
                 child: CustomPaint(
-                  painter: CustomWeatherIndicator(pressure: _pressure),
+                  painter: CustomWeatherIndicator(pressure: widget._pressure, cloud: cloud),
                 ),
               ),
             ),
           ),
-          Text('$_pressure'),
+          Text('${widget._pressure}'),
         ],
       )),
     );
@@ -51,34 +65,45 @@ class WeatherIndicator extends StatelessWidget {
 
 class CustomWeatherIndicator extends CustomPainter{
   final double _pressure;
+  final List<Offset> _cloud;
+
+  int get cloudLength => _cloud.length;
 
   double get pressure => _pressure;
 
-  CustomWeatherIndicator({required double pressure}) : _pressure = pressure;
+  CustomWeatherIndicator({
+    required double pressure,
+    required List<Offset> cloud,
+  }) : _pressure = pressure, _cloud = cloud;
 
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint()
         ..color = Colors.deepOrange
+        ..strokeWidth = 5
         ..style = PaintingStyle.fill;
     var path = Path()
-        ..addOval(Rect.fromCircle(center: const Offset(150,200), radius: 100));
+        ..addOval(Rect.fromCircle(center: const Offset(150,200), radius: 100))
+        ..close();
     canvas.drawPath(path, paint);
     var paint2 = Paint()
       ..color = Colors.black
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill;
+
     var path2 = Path()
-      ..moveTo(50, 200)
-      ..addPolygon(cloud,
-       true);
+      ..addPolygon(_cloud, false)
+      ..close();
+
 
     canvas.drawPath(path2, paint2);
-
-    canvas.drawPath(path2, paint2);
-    print('repaint with $cloud');
+    print('repaint with $_cloud');
   }
 
 
   @override
-  bool shouldRepaint(CustomWeatherIndicator oldDelegate) => _pressure != oldDelegate.pressure;
+  bool shouldRepaint(CustomWeatherIndicator oldDelegate) =>
+      _pressure != oldDelegate.pressure ||
+  _cloud.length != oldDelegate.cloudLength;
 }
