@@ -21,28 +21,25 @@ class AppStyleColor {
 
 class AppStyleTheme extends InheritedWidget{
   final AppStyleColor _appStyleColor;
+  final AppStyleColor _appStyleWhiteColor;
 
   AppStyleColor get appStyleColor => _appStyleColor;
 
-  AppStyleColor get appStyleInvertColor => AppStyleColor(
-            appBackgroundColor: Color(~appStyleColor.appBackgroundColor.value),
-            appBarBackgroundColor: Color(~appStyleColor.appBarBackgroundColor.value),
-            appBarTextColor: Color(~appStyleColor.appBarTextColor.value),
-            textColor: Color(~appStyleColor.textColor.value),
-            buttonBackgroundColor: Color(~appStyleColor.buttonBackgroundColor.value),
-            buttonIconColor: Color(~appStyleColor.buttonIconColor.value),
-            );
+  AppStyleColor get appStyleWhiteColor => _appStyleWhiteColor;
 
   const AppStyleTheme({
     super.key,
     required super.child,
     required AppStyleColor appStyleColor,
-  }) : _appStyleColor = appStyleColor;
+    required AppStyleColor appStyleWhiteColor,
+  }) : _appStyleColor = appStyleColor, _appStyleWhiteColor = appStyleWhiteColor;
 
   static AppStyleTheme of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<AppStyleTheme>() as AppStyleTheme;
 
   @override
-  bool updateShouldNotify(AppStyleTheme oldWidget) => appStyleColor != oldWidget.appStyleColor;
+  bool updateShouldNotify(AppStyleTheme oldWidget) =>
+      _appStyleColor != oldWidget.appStyleColor ||
+      _appStyleWhiteColor != oldWidget.appStyleWhiteColor;
 
 }

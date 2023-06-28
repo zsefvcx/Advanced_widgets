@@ -20,7 +20,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final appStyleColor = _invertColor?AppStyleTheme.of(context).appStyleInvertColor:AppStyleTheme.of(context).appStyleColor;
+    final appStyleColor = _invertColor?AppStyleTheme.of(context).appStyleWhiteColor:AppStyleTheme.of(context).appStyleColor;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appStyleColor.appBarBackgroundColor,
@@ -67,9 +67,10 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: ()=> setState(() {
               _invertColor = !_invertColor;
             }),
-            tooltip: 'Invert Colors',
+            tooltip: 'BW Colors',
             backgroundColor: appStyleColor.buttonBackgroundColor,
             child: Icon(Icons.invert_colors,
+              size: 40,
               color: appStyleColor.buttonIconColor,
             ),
           ),

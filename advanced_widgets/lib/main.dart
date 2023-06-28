@@ -17,10 +17,18 @@ class MyApp extends StatelessWidget {
       appStyleColor: AppStyleColor(
         appBackgroundColor: Colors.black,
         appBarBackgroundColor: Colors.orange,
-        appBarTextColor: Colors.pink,
+        appBarTextColor: Colors.indigo,
+        textColor: Colors.deepOrangeAccent,
+        buttonBackgroundColor: Colors.orangeAccent,
+        buttonIconColor: Colors.indigo,
+      ),
+      appStyleWhiteColor: AppStyleColor(
+        appBackgroundColor: Colors.white,
+        appBarBackgroundColor: Colors.blueAccent,
+        appBarTextColor: Colors.white,
         textColor: Colors.deepOrangeAccent,
         buttonBackgroundColor: Colors.blue,
-        buttonIconColor: Colors.indigo,
+        buttonIconColor: Colors.white,
       ),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
