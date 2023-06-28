@@ -17,6 +17,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _invertColor = false;
 
+  double _pressure = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,21 +34,51 @@ class _MyHomePageState extends State<MyHomePage> {
           color: appStyleColor.appBackgroundColor,
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  'You have pushed the button this many times:',
-                  style: TextStyle(color: appStyleColor.textColor),
-                ),
-                Text(
-                  '$_counter',
-                  style: TextStyle(color: appStyleColor.textColor),
+                WeatherIndicator(pressure: _pressure),
+                Column(
+                  children: [
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Row(
+                        children: [
+                          Icon(Icons.sunny, color: appStyleColor.textColor),
+                          Text(
+                            '   Weather:',
+                            style: TextStyle(color: appStyleColor.textColor),
+                          ),
+                        ],
+                      ),
+                      Slider(
+                        value: _pressure,
+                        label: '$_pressure',
+                        divisions: 50,
+                        min: 0,
+                        max: 1,
+                        activeColor: appStyleColor.textColor,
+                        inactiveColor: appStyleColor.buttonBackgroundColor,
+                        onChanged: (v) => setState(() {
+                          _pressure = ((v*100).round()/100);
+                        })
+                      ),
+                    ]),
+                    Text(
+                      'You have pushed the button this many times:',
+                      style: TextStyle(color: appStyleColor.textColor),
+                    ),
+                    Text(
+                      '$_counter',
+                      style: TextStyle(color: appStyleColor.textColor),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -76,6 +107,28 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class WeatherIndicator extends StatelessWidget {
+  const WeatherIndicator({
+    super.key,
+    required this.pressure,
+  });
+
+  final double pressure;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(width: 5, color: Colors.black),
+      ),
+      width: 50,
+      height: 50,
+      child: Center(child: Text('$pressure')),
     );
   }
 }
