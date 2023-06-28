@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         appBarBackgroundColor: Colors.blueAccent,
         appBarTextColor: Colors.white,
         textColor: Colors.deepOrangeAccent,
-        buttonBackgroundColor: Colors.blue,
+        buttonBackgroundColor: Colors.indigo,
         buttonIconColor: Colors.white,
       ),
       child: MaterialApp(
