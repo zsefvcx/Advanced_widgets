@@ -42,26 +42,27 @@ class _WeatherIndicatorState extends State<WeatherIndicator> {
           MouseRegion(
             onHover: (event) {
               position = event.localPosition;
-              if (enablePaint && (abs(prevPosition.dx-position.dx)>1 || abs(prevPosition.dy-position.dy)>1)){
-                cloud.add(position);
-                print(cloud);
-                setState(() {
-                });
-                prevPosition = position;
-              }
+              print(position);
+              // if (enablePaint && (abs(prevPosition.dx-position.dx)>1 || abs(prevPosition.dy-position.dy)>1)){
+              //   cloud.add(position);
+              //   print(cloud);
+              //   setState(() {
+              //   });
+              //   prevPosition = position;
+              // }
             },
             child: GestureDetector(
               onTap: () {
-                cloud.add(position);
-                print(cloud);
-                setState(() {
-                });
+                // cloud.add(position);
+                // //print(cloud);
+                // setState(() {
+                // });
               },
               onLongPress: () {
-                cloud.clear();
-                print(cloud);
-                setState(() {
-                });
+                // cloud.clear();
+                // //print(cloud);
+                // setState(() {
+                // });
               },
               onSecondaryTap: () => enablePaint = !enablePaint,
               child: SizedBox(
@@ -74,23 +75,23 @@ class _WeatherIndicatorState extends State<WeatherIndicator> {
               ),
             ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('${widget._pressure} ${cloud.length}'),
-              TextButton(onPressed: () async {
-                cloud.clear();
-                print(cloud);
-                setState(() {
-                });
-              }, child: const Text('X')),
-              TextButton(onPressed: () async {
-                final SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setString('action', cloud.toString());
-              }, child: const Text('Сохранить')),
-            ],
-          ),
+          // Row(
+          //   crossAxisAlignment: CrossAxisAlignment.center,
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text('${widget._pressure} ${cloud.length}'),
+          //     TextButton(onPressed: () async {
+          //       cloud.clear();
+          //       print(cloud);
+          //       setState(() {
+          //       });
+          //     }, child: const Text('X')),
+          //     TextButton(onPressed: () async {
+          //       final SharedPreferences prefs = await SharedPreferences.getInstance();
+          //       await prefs.setString('action', cloud.toString());
+          //     }, child: const Text('Сохранить')),
+          //   ],
+          // ),
         ],
       ),
     );
@@ -115,7 +116,7 @@ class CustomWeatherIndicator extends CustomPainter{
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint()
-        ..color = Colors.deepOrange.withOpacity(_opacity>0.7?0:((10/3)*_opacity-7/3))
+        ..color = Colors.deepOrange.withOpacity(_opacity>0.7?0:(-(10/7)*_opacity+1))
         ..strokeWidth = 5
         ..style = PaintingStyle.fill;
     var path = Path()
@@ -123,19 +124,42 @@ class CustomWeatherIndicator extends CustomPainter{
         ..close();
     canvas.drawPath(path, paint);
     var paint2 = Paint()
-      //..color = Colors.black.withOpacity(_opacity<0.7?0:((10/3)*_opacity-7/3))
-      ..color = Colors.black.withOpacity(_opacity<0.4?0:((10/3)*_opacity-7/3))
+      ..color = Colors.black12.withOpacity(_opacity<0.3?0:((10/7)*_opacity-(3/7)))
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.fill;
+    var path2 = Path()
+      ..addPolygon(_cloud, false)
+      ..close();
+    canvas.drawPath(path2, paint2);
+    var paint3 = Paint()
+      ..color = Colors.blue.withOpacity(_opacity<0.7?0:((10/3)*_opacity-7/3))
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill;
 
-    var path2 = Path()
-      ..addPolygon(_cloud, false)
+    var path3 = Path()
+      ..moveTo(95, 319)
+      ..lineTo(80, 350)
+      ..lineTo(82, 352)
+      ..lineTo(98, 315)
+      ..moveTo(95+50, 319)
+      ..lineTo(80+50, 350)
+      ..lineTo(82+50, 352)
+      ..lineTo(98+50, 315)
+      ..moveTo(95+100, 319)
+      ..lineTo(80+100, 350)
+      ..lineTo(82+100, 352)
+      ..lineTo(98+100, 315)
+
       ..close();
+    canvas.drawPath(path3, paint3);
 
 
-    canvas.drawPath(path2, paint2);
-    print('repaint with $_cloud');
+
+
+
+    //print('repaint with $_cloud');
   }
 
 
