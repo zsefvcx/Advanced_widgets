@@ -22,6 +22,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     final appStyleColor = _invertColor?AppStyleTheme.of(context).appStyleWhiteColor:AppStyleTheme.of(context).appStyleColor;
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                WeatherIndicator(pressure: _pressure),
+                WeatherIndicator(pressure: _pressure, appStyleColor: appStyleColor),
                 Column(
                   children: [
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
